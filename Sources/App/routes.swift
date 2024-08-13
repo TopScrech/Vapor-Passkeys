@@ -71,9 +71,26 @@ func routes(_ app: Application) throws {
         
         return .ok
     }
+    
+    authSessionRoutes.get("authenticate") { req -> PublicKeyCredentialRequestOptions in
+        let options = try req.webAuthn.beginAuthentication()
+        
+        req.session.data["?authChallenge"] = Data(options.challenge).base64EncodedString() //32
+        
+        return options
+    }
 }
 
 extension PublicKeyCredentialCreationOptions: AsyncResponseEncodable {
+    public func encodeResponse(for request: Request) async throws -> Response {
+        var headers = HTTPHeaders()
+        headers.contentType = .json
+        
+        return try Response(status: .ok, headers: headers, body: .init(data: JSONEncoder().encode(self)))
+    }
+}
+
+extension PublicKeyCredentialRequestOptions: AsyncResponseEncodable {
     public func encodeResponse(for request: Request) async throws -> Response {
         var headers = HTTPHeaders()
         headers.contentType = .json
