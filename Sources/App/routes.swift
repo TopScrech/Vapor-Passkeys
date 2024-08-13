@@ -4,7 +4,7 @@ import WebAuthn
 
 func routes(_ app: Application) throws {
     app.get(".well-known", "apple-app-site-association") { req -> Response in
-        let appId = "8FQUA2F388.dev.topscrech.Authify"
+        let appId = "8FQUA2F388.dev.topscrech.Signius"
         
         let responseString =
         """
