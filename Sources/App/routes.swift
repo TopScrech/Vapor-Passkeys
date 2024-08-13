@@ -13,7 +13,7 @@ func routes(_ app: Application) throws {
         "apps": [
             "\(appId)"
         ]
-    }
+    },
 }
 """
         
