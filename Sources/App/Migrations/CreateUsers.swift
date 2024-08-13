@@ -1,7 +1,7 @@
 import Fluent
 
 struct CreateUsers: AsyncMigration {
-    func prepare(on database: FluentKit.Database) async throws {
+    func prepare(on database: Database) async throws {
         try await database.schema("users")
             .id()
             .field("username", .string, .required)
