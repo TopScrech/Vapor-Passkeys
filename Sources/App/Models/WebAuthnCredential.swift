@@ -2,7 +2,7 @@ import Vapor
 import Fluent
 import WebAuthn
 
-final class WebAuthnCredentials: Model, Content {
+final class WebAuthnCredential: Model, Content {
     static let schema = "webAuthn_Credentials"
     
     @ID(custom: .id, generatedBy: .user)

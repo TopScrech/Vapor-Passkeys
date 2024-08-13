@@ -18,14 +18,14 @@ final class User: Model, Content {
     var createdAt: Date?
     
     @Children(for: \.$user)
-    var children: [WebAuthnCredentials]
+    var children: [WebAuthnCredential]
     
     init() {}
     
     init(
         id: UUID? = nil,
         username: String,
-        passkey: String
+        passwordHash: String? = nil
     ) {
         self.id = id
         self.username = username
