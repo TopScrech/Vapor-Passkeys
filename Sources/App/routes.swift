@@ -22,7 +22,7 @@ func routes(_ app: Application) throws {
         
         return response
     }
-
+    
     let authSessionRoutes = app.grouped(User.sessionAuthenticator())
     
     authSessionRoutes.get("signup") { req -> Response in
@@ -103,6 +103,17 @@ func routes(_ app: Application) throws {
         try await credential.save(on: req.db)
         
         return Response(status: .ok)
+    }
+    
+    authSessionRoutes.get("sighout") { req -> Response in
+        req.auth.logout(User.self)
+        return Response(status: .ok)
+    }
+    
+    authSessionRoutes.delete("deleteCredential") { req -> Response in
+        let user = try req.auth.require(User.self)
+        try await user.delete(on: req.db)
+        return Response(status: .noContent)
     }
 }
 
