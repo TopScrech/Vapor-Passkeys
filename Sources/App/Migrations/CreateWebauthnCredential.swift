@@ -1,6 +1,6 @@
 import Fluent
 
-struct CreateAuthnCredential: AsyncMigration {
+struct CreateWebauthnCredential: AsyncMigration {
     func prepare(on database: Database) async throws {
         try await database.schema("webAuthn_Credentials")
             .field("id", .string, .identifier(auto: false))
