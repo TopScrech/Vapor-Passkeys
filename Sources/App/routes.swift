@@ -75,9 +75,34 @@ func routes(_ app: Application) throws {
     authSessionRoutes.get("authenticate") { req -> PublicKeyCredentialRequestOptions in
         let options = try req.webAuthn.beginAuthentication()
         
-        req.session.data["?authChallenge"] = Data(options.challenge).base64EncodedString() //32
+        req.session.data["authChallenge"] = Data(options.challenge).base64EncodedString() //32
         
         return options
+    }
+    
+    authSessionRoutes.post("authenticate") { req -> Response in
+        guard let challengeEncoded = req.session.data["authChallenge"], let challenge = Data(base64Encoded: challengeEncoded) else {
+            throw Abort(.badRequest, reason: "Error retrieving and encoding challenge from server")
+        }
+        
+        req.session.data["authChallenge"] = nil
+        
+        let authenticationCredential = try req.content.decode(AuthenticationCredential.self)
+        
+        guard let credential = try await WebAuthnCredential.query(on: req.db)
+            .filter(\.$id == authenticationCredential.id.urlDecoded.asString())
+            .with(\.$user)
+            .first()
+        else {
+            throw Abort(.unauthorized, reason: "Error finding WebAuthnCredential from database")
+        }
+        
+        let verifiedAuthentication = try req.webAuthn.finishAuthentication(credential: authenticationCredential, expectedChallenge: [UInt8](challenge), credentialPublicKey: [UInt8](URLEncodedBase64(credential.publicKey).urlDecoded.decoded!), credentialCurrentSignCount: UInt32(credential.currentSignCount))
+        
+        credential.currentSignCount = Int32(verifiedAuthentication.newSignCount)
+        try await credential.save(on: req.db)
+        
+        return Response(status: .ok)
     }
 }
 
