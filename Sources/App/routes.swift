@@ -29,7 +29,7 @@ func routes(_ app: Application) throws {
         let username = try req.query.get(String.self, at: "username")
         
         guard try await User.query(on: req.db).first() == nil else {
-            throw Abort(.conflict, reason: "Username taken")
+            throw Abort(.conflict, reason: "Username \(username) taken")
         }
         
         let user = User(username: username)
