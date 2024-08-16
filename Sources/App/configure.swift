@@ -26,7 +26,7 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(CreateWebauthnCredential())
     
     try await app.autoMigrate()
-    app.logger.logLevel = .debug
+    app.logger.logLevel = .error
     
     let domain = ""
     //    let domain = "bisquit-id.topscrech.dev"
