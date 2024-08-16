@@ -25,7 +25,6 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(CreateWebauthnCredential())
     
     try await app.autoMigrate()
-    app.logger.logLevel = .debug
     
     let domain = "bisquit-id.topscrech.dev"
     app.webAuthn = WebAuthnManager(config: .init(
