@@ -17,8 +17,8 @@ public func configure(_ app: Application) async throws {
         username: "topscrech",
         password: "481664",
         database: "Authify",
-        tls: .disable)
-    ), as: .psql)
+        tls: .disable
+    )), as: .psql)
     
     app.sessions.use(.fluent)
     
@@ -26,9 +26,10 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(CreateWebauthnCredential())
     
     try await app.autoMigrate()
+    app.logger.logLevel = .debug
     
     let domain = ""
-//    let domain = "bisquit-id.topscrech.dev"
+    //    let domain = "bisquit-id.topscrech.dev"
     app.webAuthn = WebAuthnManager(config: .init(
         relyingPartyID: "\(domain)/",
         relyingPartyName: "Signius",
