@@ -24,24 +24,22 @@ func routes(_ app: Application) throws {
     }
     
     let authSessionRoutes = app.grouped(User.sessionAuthenticator())
-  
+    
     authSessionRoutes.get("signup") { req -> Response in
         let username = try req.query.get(String.self, at: "username")
         
         let userCount = try await User.query(on: req.db).count()
         print("Total Users Count: \(userCount)")
         
-        // Check if a user with the provided username already exists
         if let existingUser = try await User.query(on: req.db)
             .filter(\.$username == username)
             .first() {
             print("Username \(existingUser.username) is already taken.")
             throw Abort(.conflict, reason: "Username \(username) taken")
         } else {
-            print("Username \(username) is available.")
+            print("Username \(username) is available")
         }
-
-        // Proceed with user creation
+        
         let user = User(username: username)
         
         try await user.create(on: req.db)
@@ -51,23 +49,6 @@ func routes(_ app: Application) throws {
         
         return req.redirect(to: "makeCredential")
     }
-    
-//    authSessionRoutes.get("signup") { req -> Response in
-//        let username = try req.query.get(String.self, at: "username")
-//        
-//        await print(try User.query(on: req.db).count())
-//        
-//        guard try await User.query(on: req.db).first() == nil else {
-//            throw Abort(.conflict, reason: "Username \(username) taken")
-//        }
-//        
-//        let user = User(username: username)
-//        
-//        try await user.create(on: req.db)
-//        req.auth.login(user)
-//        
-//        return req.redirect(to: "makeCredential")
-//    }
     
     authSessionRoutes.get("makeCredential") { req -> PublicKeyCredentialCreationOptions in
         let user = try req.auth.require(User.self)
