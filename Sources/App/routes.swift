@@ -152,7 +152,7 @@ func routes(_ app: Application) throws {
     }
 }
 
-extension PublicKeyCredentialCreationOptions: @retroactive AsyncResponseEncodable {
+extension PublicKeyCredentialCreationOptions: AsyncResponseEncodable {
     public func encodeResponse(for request: Request) async throws -> Response {
         var headers = HTTPHeaders()
         headers.contentType = .json
@@ -161,7 +161,7 @@ extension PublicKeyCredentialCreationOptions: @retroactive AsyncResponseEncodabl
     }
 }
 
-extension PublicKeyCredentialRequestOptions: @retroactive AsyncResponseEncodable {
+extension PublicKeyCredentialRequestOptions: AsyncResponseEncodable {
     public func encodeResponse(for request: Request) async throws -> Response {
         var headers = HTTPHeaders()
         headers.contentType = .json
