@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  Bisquit-ID
-//
-//  Created by Sergei Saliukov on 13/8/24.
-//
-
 import Vapor
 import WebAuthn
 
@@ -31,12 +24,3 @@ extension Request {
         application.webAuthn
     }
 }
-
-//    let webAuthnManager = WebAuthnManager(
-//        config: WebAuthnManager.Config(
-//            relyingPartyID: "49.13.93.214",
-//            relyingPartyName: "Authify",
-//            relyingPartyOrigin: "https://49.13.93.214"
-//        )
-//    )
-
