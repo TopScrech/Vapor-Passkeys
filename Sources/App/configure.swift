@@ -12,7 +12,7 @@ public func configure(_ app: Application) async throws {
     app.middleware.use(app.sessions.middleware)
     
     app.databases.use(DatabaseConfigurationFactory.postgres(configuration: .init(
-        hostname: "49.13.93.214",
+        hostname: "0.0.0.0",
         port: 5432,
         username: "topscrech",
         password: "481664",
