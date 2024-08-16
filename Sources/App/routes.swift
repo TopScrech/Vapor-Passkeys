@@ -107,10 +107,18 @@ func routes(_ app: Application) throws {
             throw Abort(.unauthorized, reason: "Error finding WebAuthnCredential from database")
         }
         
-        let verifiedAuthentication = try req.webAuthn.finishAuthentication(credential: authenticationCredential, expectedChallenge: [UInt8](challenge), credentialPublicKey: [UInt8](URLEncodedBase64(credential.publicKey).urlDecoded.decoded!), credentialCurrentSignCount: UInt32(credential.currentSignCount))
+        let verifiedAuthentication = try req.webAuthn.finishAuthentication(
+            credential: authenticationCredential,
+            expectedChallenge: [UInt8](challenge),
+            credentialPublicKey: [UInt8](URLEncodedBase64(credential.publicKey).urlDecoded.decoded!),
+            credentialCurrentSignCount: UInt32(credential.currentSignCount)
+        )
         
         credential.currentSignCount = Int32(verifiedAuthentication.newSignCount)
         try await credential.save(on: req.db)
+        
+        req.auth.login(credential.user)
+        print("User \(credential.user.username) authenticated and logged in.")
         
         return Response(status: .ok)
     }
