@@ -49,30 +49,7 @@ func routes(_ app: Application) throws {
         
         return req.redirect(to: "makeCredential")
     }
-    
-//    authSessionRoutes.get("makeCredential") { req -> PublicKeyCredentialCreationOptions in
-//        // Ensure the user is authenticated
-//        let user = try req.auth.require(User.self)
-//        print("Authenticated user: \(user.username) (ID: \(user.id?.uuidString ?? "unknown"))")
-//        
-//        // Begin the WebAuthn registration process
-//        let options: PublicKeyCredentialCreationOptions
-//        
-//        options = req.webAuthn.beginRegistration(user: user.webAuthnUser)
-//        print("WebAuthn registration started for user: \(user.username)")
-//        
-//        // Store the challenge in the session data
-//        let challenge = Data(options.challenge).base64EncodedString()
-//        req.session.data["registrationChallenge"] = challenge
-//        print("Stored registration challenge in session for user: \(user.username)")
-//        
-//        // Log the challenge details (avoid sensitive details for security reasons)
-//        print("Challenge (base64-encoded): \(challenge)")
-//        
-//        // Return the options for the credential creation
-//        return options
-//    }
-    
+        
     authSessionRoutes.get("makeCredential") { req -> PublicKeyCredentialCreationOptions in
         let user = try req.auth.require(User.self)
         
@@ -138,10 +115,30 @@ func routes(_ app: Application) throws {
         return Response(status: .ok)
     }
     
-    authSessionRoutes.get("sighout") { req -> Response in
-        req.auth.logout(User.self)
-        return Response(status: .ok)
+    authSessionRoutes.get("signout") { req -> Response in
+        // Check if the user is currently authenticated
+        if let user = req.auth.get(User.self) {
+            print("Signing out user: \(user.username) (ID: \(user.id?.uuidString ?? "unknown"))")
+            
+            // Log out the user
+            req.auth.logout(User.self)
+            print("User \(user.username) has been logged out.")
+        } else {
+            print("No user was logged in. Sign out request received with no active session.")
+        }
+        
+        // Return a successful response
+        let response = Response(status: .ok)
+        print("Sign out request processed. Response status: \(response.status).")
+        
+        return response
     }
+    
+//    authSessionRoutes.get("signout") { req -> Response in
+//        req.auth.logout(User.self)
+//        
+//        return Response(status: .ok)
+//    }
     
     authSessionRoutes.delete("deleteCredential") { req -> Response in
         let user = try req.auth.require(User.self)
