@@ -27,7 +27,8 @@ public func configure(_ app: Application) async throws {
     
     try await app.autoMigrate()
     
-    let domain = "bisquit-id.topscrech.dev"
+    let domain = ""
+//    let domain = "bisquit-id.topscrech.dev"
     app.webAuthn = WebAuthnManager(config: .init(
         relyingPartyID: "\(domain)/",
         relyingPartyName: "Signius",

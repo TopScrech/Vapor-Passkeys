@@ -75,7 +75,7 @@ func routes(_ app: Application) throws {
     authSessionRoutes.get("authenticate") { req -> PublicKeyCredentialRequestOptions in
         let options = try req.webAuthn.beginAuthentication()
         
-        req.session.data["authChallenge"] = Data(options.challenge).base64EncodedString() //32
+        req.session.data["authChallenge"] = Data(options.challenge).base64EncodedString()
         
         return options
     }
@@ -112,7 +112,9 @@ func routes(_ app: Application) throws {
     
     authSessionRoutes.delete("deleteCredential") { req -> Response in
         let user = try req.auth.require(User.self)
+        
         try await user.delete(on: req.db)
+        
         return Response(status: .noContent)
     }
 }
