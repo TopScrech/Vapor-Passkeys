@@ -26,9 +26,7 @@ func routes(_ app: Application) throws {
     let authSessionRoutes = app.grouped(User.sessionAuthenticator())
     
     authSessionRoutes.get("signup") { req -> Response in
-        guard let username = try? req.query.get(String.self, at: "username") else {
-            throw Abort(.conflict, reason: "WTF")
-        }
+        let username = try req.query.get(String.self, at: "username")
         
         guard try await User.query(on: req.db).first() == nil else {
             throw Abort(.conflict, reason: "Username \(username) taken")

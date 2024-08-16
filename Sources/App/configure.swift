@@ -27,13 +27,12 @@ public func configure(_ app: Application) async throws {
     
     try await app.autoMigrate()
     
-    let domain = ""
+    let domain = "bisquit-id.topscrech.dev"
     app.webAuthn = WebAuthnManager(config: .init(
         relyingPartyID: "\(domain)/",
         relyingPartyName: "Signius",
-        relyingPartyOrigin: "http://\(domain)"
+        relyingPartyOrigin: "https://\(domain)"
     ))
-#warning("https")
     
     try routes(app)
 }
