@@ -51,14 +51,37 @@ func routes(_ app: Application) throws {
     }
     
     authSessionRoutes.get("makeCredential") { req -> PublicKeyCredentialCreationOptions in
+        // Ensure the user is authenticated
         let user = try req.auth.require(User.self)
+        print("Authenticated user: \(user.username) (ID: \(user.id?.uuidString ?? "unknown"))")
         
-        let options = req.webAuthn.beginRegistration(user: user.webAuthnUser)
+        // Begin the WebAuthn registration process
+        let options: PublicKeyCredentialCreationOptions
         
-        req.session.data["registrationChallenge"] = Data(options.challenge).base64EncodedString()
+        options = req.webAuthn.beginRegistration(user: user.webAuthnUser)
+        print("WebAuthn registration started for user: \(user.username)")
         
+        // Store the challenge in the session data
+        let challenge = Data(options.challenge).base64EncodedString()
+        req.session.data["registrationChallenge"] = challenge
+        print("Stored registration challenge in session for user: \(user.username)")
+        
+        // Log the challenge details (avoid sensitive details for security reasons)
+        print("Challenge (base64-encoded): \(challenge)")
+        
+        // Return the options for the credential creation
         return options
     }
+    
+//    authSessionRoutes.get("makeCredential") { req -> PublicKeyCredentialCreationOptions in
+//        let user = try req.auth.require(User.self)
+//        
+//        let options = req.webAuthn.beginRegistration(user: user.webAuthnUser)
+//        
+//        req.session.data["registrationChallenge"] = Data(options.challenge).base64EncodedString()
+//        
+//        return options
+//    }
     
     authSessionRoutes.post("makeCredential") { req -> HTTPStatus in
         let user = try req.auth.require(User.self)
@@ -129,7 +152,7 @@ func routes(_ app: Application) throws {
     }
 }
 
-extension PublicKeyCredentialCreationOptions: AsyncResponseEncodable {
+extension PublicKeyCredentialCreationOptions: @retroactive AsyncResponseEncodable {
     public func encodeResponse(for request: Request) async throws -> Response {
         var headers = HTTPHeaders()
         headers.contentType = .json
@@ -138,7 +161,7 @@ extension PublicKeyCredentialCreationOptions: AsyncResponseEncodable {
     }
 }
 
-extension PublicKeyCredentialRequestOptions: AsyncResponseEncodable {
+extension PublicKeyCredentialRequestOptions: @retroactive AsyncResponseEncodable {
     public func encodeResponse(for request: Request) async throws -> Response {
         var headers = HTTPHeaders()
         headers.contentType = .json
