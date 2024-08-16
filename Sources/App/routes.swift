@@ -28,6 +28,8 @@ func routes(_ app: Application) throws {
     authSessionRoutes.get("signup") { req -> Response in
         let username = try req.query.get(String.self, at: "username")
         
+        await print(try User.query(on: req.db).count())
+        
         guard try await User.query(on: req.db).first() == nil else {
             throw Abort(.conflict, reason: "Username \(username) taken")
         }
