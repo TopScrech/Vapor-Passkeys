@@ -3,6 +3,10 @@ import Vapor
 import WebAuthn
 
 func routes(_ app: Application) throws {
+    app.get("ping") { req -> String in
+        "pong"
+    }
+    
     app.get(".well-known", "apple-app-site-association") { req -> Response in
         let appId = "8FQUA2F388.dev.topscrech.Signius"
         
@@ -49,7 +53,7 @@ func routes(_ app: Application) throws {
         
         return req.redirect(to: "makeCredential")
     }
-        
+    
     authSessionRoutes.get("makeCredential") { req -> PublicKeyCredentialCreationOptions in
         let user = try req.auth.require(User.self)
         
@@ -142,11 +146,11 @@ func routes(_ app: Application) throws {
         return response
     }
     
-//    authSessionRoutes.get("signout") { req -> Response in
-//        req.auth.logout(User.self)
-//        
-//        return Response(status: .ok)
-//    }
+    //    authSessionRoutes.get("signout") { req -> Response in
+    //        req.auth.logout(User.self)
+    //
+    //        return Response(status: .ok)
+    //    }
     
     authSessionRoutes.delete("deleteCredential") { req -> Response in
         let user = try req.auth.require(User.self)
