@@ -10,8 +10,9 @@ enum Entrypoint {
         try LoggingSystem.bootstrap(from: &env)
         
         let app = try await Application.make(env)
-        app.http.server.configuration.port = 1897
-        app.http.server.configuration.hostname = "127.0.0.1"
+        app.http.server.configuration.port = 1234
+        app.http.server.configuration.hostname = "5.83.140.8"
+//        app.http.server.configuration.hostname = "127.0.0.1"
         
         // This attempts to install NIO as the Swift Concurrency global executor.
         // You can enable it if you'd like to reduce the amount of context switching between NIO and Swift Concurrency.
